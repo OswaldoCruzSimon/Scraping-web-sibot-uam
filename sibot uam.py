@@ -48,7 +48,7 @@ def getNoOfertasVisisbles():
    
     resp = opener.open('https://www.bolsadetrabajo.uam.mx/srcBuscaEmp.php',urllib.urlencode(next_param))
     soup = BeautifulSoup(resp.read(),"html.parser")
-    return soup.findAll('strong')[1].text
+    return int(soup.findAll('strong')[1].text)
 
 def getVacPag(ini,fin):
     next_param = {'bolTipoQ':'0',
@@ -58,7 +58,7 @@ def getVacPag(ini,fin):
                   'btnRegresar':'Siguientes+10+>'}
     vacantes = {}
 
-    for pos in range(ini,fin+1,10):
+    for pos in range(ini,fin,10):
         next_param['txtPos']=str(pos)
         resp4 = opener.open('https://www.bolsadetrabajo.uam.mx/srcBuscaEmp.php',urllib.urlencode(next_param))
         html_text4 = resp4.read();
@@ -66,6 +66,7 @@ def getVacPag(ini,fin):
         pages = vacFromIds(ids)
         for id,page in pages.items():
             vacantes[id] =  vacFromPage(page)
+        print ini
     return vacantes
 
 
@@ -86,8 +87,9 @@ resp1 = opener.open('https://www.bolsadetrabajo.uam.mx/sesion.php', urllib.urlen
 #ids = idsFromPage(html_text)
 #pages = vacFromIds(ids)
 
+vacMax = getNoOfertasVisisbles()
 
-vac = getVacPag(0,10)
+vac = getVacPag(0,50)
 
 with open('./vacantes.json', 'w') as f:
     json.dump(vac, f, indent=4)
