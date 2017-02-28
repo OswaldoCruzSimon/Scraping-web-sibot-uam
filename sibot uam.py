@@ -2,6 +2,8 @@ import urllib, urllib2, cookielib, re
 #from pyquery import PyQuery
 from bs4 import BeautifulSoup
 import json
+import time
+import datetime
 """
 codigo encontrado:
 http://stackoverflow.com/questions/189555/how-to-use-python-to-login-to-a-webpage-and-retrieve-cookies-for-later-usage
@@ -66,7 +68,9 @@ def getVacPag(ini,fin):
         pages = vacFromIds(ids)
         for id,page in pages.items():
             vacantes[id] =  vacFromPage(page)
-        print ini
+        time.sleep(3)
+        print pos+10
+
     return vacantes
 
 
@@ -89,9 +93,11 @@ resp1 = opener.open('https://www.bolsadetrabajo.uam.mx/sesion.php', urllib.urlen
 
 vacMax = getNoOfertasVisisbles()
 
-vac = getVacPag(0,50)
+vac = getVacPag(300,1000)
 
-with open('./vacantes.json', 'w') as f:
+fecha = datetime.datetime.now()
+filename = "%s/%s/%s %s:%s:%s" % (fecha.day, fecha.month, fecha.year, fecha.hour, fecha.month, fecha.second)
+with open('./'+filename+'.json', 'w') as f:
     json.dump(vac, f, indent=4)
 
 
