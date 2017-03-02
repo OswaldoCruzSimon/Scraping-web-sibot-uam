@@ -73,6 +73,45 @@ def getVacPag(ini,fin):
 
     return vacantes
 
+def saveDict(filename,dicc):
+    #print len(dicc)
+    with open(filename, 'w') as f:
+        json.dump(dicc, f, indent=4)
+    return
+
+def loadDict(filename):
+    try:
+        with open(filename) as f:
+            dicc = json.load(f)
+    except:
+        dicc={}
+    return dicc
+
+def updateVac(filename,newDicc):
+    dicc = loadDict(filename)
+    dicc.update(newDicc)
+    saveDict(filename,dicc)
+
+def getVacPagPersistent(filename,ini,fin):
+    next_param = {'bolTipoQ':'0',
+                  'txtClave':'Oswaldo948',
+                  'txtUsuario':'2123065423',
+                  'txtBuscaEmp':'',
+                  'btnRegresar':'Siguientes+10+>'}
+    vacantes = {}
+
+    for pos in range(ini,fin,10):
+        next_param['txtPos']=str(pos)
+        resp4 = opener.open('https://www.bolsadetrabajo.uam.mx/srcBuscaEmp.php',urllib.urlencode(next_param))
+        html_text4 = resp4.read();
+        ids = idsFromPage(html_text4)
+        pages = vacFromIds(ids)
+        for id,page in pages.items():
+            vacantes[id] =  vacFromPage(page)
+        updateVac(filename,vacantes)
+        vacantes = {}
+        time.sleep(3)
+        print pos+10
 
 login_param = {'txtUsuario':'2123065423',
          'txtContrasena':'Oswaldo948',
@@ -91,14 +130,11 @@ resp1 = opener.open('https://www.bolsadetrabajo.uam.mx/sesion.php', urllib.urlen
 #ids = idsFromPage(html_text)
 #pages = vacFromIds(ids)
 
-vacMax = getNoOfertasVisisbles()
-
-vac = getVacPag(300,1000)
+#vacMax = getNoOfertasVisisbles()
 
 fecha = datetime.datetime.now()
-filename = "%s/%s/%s %s:%s:%s" % (fecha.day, fecha.month, fecha.year, fecha.hour, fecha.month, fecha.second)
-with open('./'+filename+'.json', 'w') as f:
-    json.dump(vac, f, indent=4)
+filename = "%s-%s-%s %s:%s:%s.json" % (fecha.day, fecha.month, fecha.year, fecha.hour, fecha.month, fecha.second)
 
+vac = getVacPagPersistent(filename,300,350)
 
 
