@@ -133,8 +133,8 @@ resp1 = opener.open('https://www.bolsadetrabajo.uam.mx/sesion.php', urllib.urlen
 #vacMax = getNoOfertasVisisbles()
 
 fecha = datetime.datetime.now()
-filename = "%s-%s-%s %s:%s:%s.json" % (fecha.day, fecha.month, fecha.year, fecha.hour, fecha.month, fecha.second)
+filename = "%s-%s-%s %s-%s-%s.json" % (fecha.day, fecha.month, fecha.year, fecha.hour, fecha.month, fecha.second)
 
-vac = getVacPagPersistent(filename,300,350)
+vac = getVacPagPersistent(filename,450,550)
 
 
